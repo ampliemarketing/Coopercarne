@@ -41,6 +41,18 @@ export function Onboarding() {
   const isLastStep = currentStep === steps.length - 1;
   const currentStepData = steps[currentStep];
 
+  const nextStep = () => {
+    if (isLastStep) {
+      completeOnboarding();
+    } else {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const prevStep = () => {
+    setCurrentStep((prev) => Math.max(0, prev - 1));
+  };
+
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
