@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate, Outlet } from "react-router";
 import { AuthProvider } from "@/app/contexts/AuthContext";
 import { RootLayout } from "@/app/components/RootLayout";
+import { RouteErrorFallback } from "@/app/components/ErrorBoundary";
 import { HomePage } from "@/app/pages/HomePage";
 import { LoginPage } from "@/app/pages/LoginPage";
 import { CadastroPage } from "@/app/pages/CadastroPage";
@@ -31,6 +32,7 @@ function AuthLayout() {
 export const router = createBrowserRouter([
   {
     element: <AuthLayout />,
+    ErrorBoundary: RouteErrorFallback,
     children: [
       { path: "/login", Component: LoginPage },
       { path: "/cadastro", Component: CadastroPage },

@@ -36,10 +36,8 @@ export function Onboarding() {
   const { showOnboarding, completeOnboarding } = useOnboarding();
   const [currentStep, setCurrentStep] = useState(0);
 
-  if (!showOnboarding) return null;
-
   const isLastStep = currentStep === steps.length - 1;
-  const currentStepData = steps[currentStep];
+  const currentStepData = steps[currentStep] || steps[0];
 
   const nextStep = () => {
     if (isLastStep) {
@@ -52,6 +50,8 @@ export function Onboarding() {
   const prevStep = () => {
     setCurrentStep((prev) => Math.max(0, prev - 1));
   };
+
+  if (!showOnboarding) return null;
 
   return (
     <AnimatePresence>
