@@ -61,8 +61,6 @@ export function NovoChamadoPage() {
                   <SelectItem value="Pedidos">Pedidos</SelectItem>
                   <SelectItem value="Entrega">Entrega</SelectItem>
                   <SelectItem value="Qualidade">Qualidade</SelectItem>
-                  <SelectItem value="Financeiro">Financeiro</SelectItem>
-                  <SelectItem value="Documentos">Documentos</SelectItem>
                   <SelectItem value="Portal">Portal/App</SelectItem>
                   <SelectItem value="Outros">Outros</SelectItem>
                 </SelectContent>

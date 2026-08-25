@@ -3,17 +3,14 @@ import { useNavigate } from "react-router";
 import {
   FileText,
   Calendar,
-  FolderOpen,
   Bell,
   DollarSign,
   MessageSquare,
-  FileCheck,
   HelpCircle,
   Package,
   ChevronRight,
   Newspaper,
   Truck,
-  AlertTriangle,
 } from "lucide-react";
 import { Card } from "@/app/components/ui/card";
 import { Badge } from "@/app/components/ui/badge";
@@ -62,13 +59,12 @@ const tipoLabel: Record<string, string> = {
 export function HomePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const isBloqueado = user?.pendenciaFinanceira?.bloqueado;
 
   const quickActions = [
-    { icon: FileText, label: "Novo Pedido", path: "/pedidos/novo", blocked: isBloqueado },
-    { icon: Calendar, label: "Agendar Abate", path: "/agenda-abate", blocked: isBloqueado },
-    { icon: Truck, label: "Ag. Entrega", path: "/agenda-entrega", blocked: isBloqueado },
-    { icon: HelpCircle, label: "Abrir Chamado", path: "/chamados/novo", blocked: false },
+    { icon: FileText, label: "Novo Pedido", path: "/pedidos/novo" },
+    { icon: Calendar, label: "Agendar Abate", path: "/agenda-abate" },
+    { icon: Truck, label: "Ag. Entrega", path: "/agenda-entrega" },
+    { icon: HelpCircle, label: "Abrir Chamado", path: "/chamados/novo" },
   ];
 
   // Definindo os itens categorizados
@@ -76,37 +72,31 @@ export function HomePage() {
     {
       titulo: "Operacional & Logística",
       itens: [
-        { icon: FileText, label: "Meus Pedidos", path: "/pedidos", badge: "3", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]", blocked: isBloqueado },
-        { icon: Calendar, label: "Agenda Abate", path: "/agenda-abate", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]", blocked: isBloqueado },
-        { icon: Truck, label: "Agenda Entrega", path: "/agenda-entrega", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]", blocked: isBloqueado },
-        { icon: MessageSquare, label: "Cotações", path: "/cotacoes", badge: "1", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]", blocked: isBloqueado },
+        { icon: FileText, label: "Meus Pedidos", path: "/pedidos", badge: "3", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]" },
+        { icon: Calendar, label: "Agenda Abate", path: "/agenda-abate", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]" },
+        { icon: Truck, label: "Agenda Entrega", path: "/agenda-entrega", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]" },
+        { icon: MessageSquare, label: "Cotações", path: "/cotacoes", badge: "1", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]" },
       ],
     },
     {
-      titulo: "Financeiro & Mercado",
+      titulo: "Mercado",
       itens: [
-        { icon: FileCheck, label: "Financeiro", path: "/financeiro", badge: "4", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]", blocked: false },
-        { icon: DollarSign, label: "Preços", path: "/precos", badge: "Atualizado", badgeColor: "bg-red-100 text-[#c51d1f] font-bold border border-red-200", iconBg: "bg-red-50 text-[#c51d1f]", blocked: false },
-        { icon: FolderOpen, label: "Documentos", path: "/documentos", badge: "2", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]", blocked: isBloqueado },
+        { icon: DollarSign, label: "Preços", path: "/precos", badge: "Atualizado", badgeColor: "bg-red-100 text-[#c51d1f] font-bold border border-red-200", iconBg: "bg-red-50 text-[#c51d1f]" },
       ],
     },
     {
       titulo: "Comunicação & Suporte",
       itens: [
-        { icon: Bell, label: "Comunicados", path: "/comunicacao", badge: "5", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]", blocked: false },
-        { icon: Newspaper, label: "Notícias", path: "/noticias", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]", blocked: false },
-        { icon: HelpCircle, label: "Chamados", path: "/chamados", badge: "2", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]", blocked: false },
-        { icon: Package, label: "Sugestões", path: "/sugestoes", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]", blocked: false },
+        { icon: Bell, label: "Comunicados", path: "/comunicacao", badge: "5", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]" },
+        { icon: Newspaper, label: "Notícias", path: "/noticias", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]" },
+        { icon: HelpCircle, label: "Chamados", path: "/chamados", badge: "2", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]" },
+        { icon: Package, label: "Sugestões", path: "/sugestoes", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]" },
       ],
     },
   ];
 
-  const handleNavigate = (path: string, blocked?: boolean) => {
-    if (blocked) {
-      navigate("/financeiro");
-    } else {
-      navigate(path);
-    }
+  const handleNavigate = (path: string) => {
+    navigate(path);
   };
 
   return (
@@ -151,39 +141,6 @@ export function HomePage() {
 
       <div className="max-w-md mx-auto px-4 py-6 space-y-6">
 
-        {/* Alerta de bloqueio financeiro */}
-        {isBloqueado && (
-          <section>
-            <div
-              className="bg-[#c51d1f] rounded-lg p-4 cursor-pointer hover:bg-[#a01517] transition-colors"
-              onClick={() => navigate("/financeiro")}
-            >
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-sm font-bold text-white">Acesso restrito — Pendência financeira</p>
-                  <p className="text-xs text-white/80 mt-1">
-                    Você possui débitos em aberto no valor de{" "}
-                    <span className="font-bold text-white">
-                      {user?.pendenciaFinanceira?.valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                    </span>. Regularize para liberar o acesso completo ao sistema.
-                  </p>
-                  {user?.pendenciaFinanceira?.boletos?.map(b => (
-                    <div key={b.numero} className="mt-2 flex items-center justify-between bg-white/10 rounded px-2.5 py-1.5">
-                      <span className="text-xs text-white">Boleto #{b.numero} · {b.status === "vencido" ? "Vencido" : "Vence"} {new Date(b.vencimento + "T00:00:00").toLocaleDateString("pt-BR")}</span>
-                      <span className="text-xs font-bold text-white">{b.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
-                    </div>
-                  ))}
-                  <p className="text-xs text-white/70 mt-2 flex items-center gap-1">
-                    <ChevronRight className="w-3 h-3" />
-                    Toque para ir ao Financeiro
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
         {/* Quick Actions */}
         <section>
           <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Acesso Rápido</h3>
@@ -193,19 +150,15 @@ export function HomePage() {
               return (
                 <Card
                   key={action.path}
-                  onClick={() => handleNavigate(action.path, action.blocked)}
-                  className={`p-4 cursor-pointer hover:shadow-lg transition-all border-gray-200 hover:border-gray-400 ${action.blocked ? "opacity-60" : ""}`}
+                  onClick={() => handleNavigate(action.path)}
+                  className="p-4 cursor-pointer hover:shadow-lg transition-all border-gray-200 hover:border-gray-400"
                 >
                   <div className="flex items-center gap-3">
                     <div className="bg-red-50 p-2.5 rounded-lg">
                       <Icon className="w-5 h-5 text-[#c51d1f]" />
                     </div>
                     <span className="text-sm font-medium text-gray-900 flex-1">{action.label}</span>
-                    {action.blocked ? (
-                      <AlertTriangle className="w-4 h-4 text-amber-400" />
-                    ) : (
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    )}
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
                   </div>
                 </Card>
               );
@@ -327,10 +280,8 @@ export function HomePage() {
                   return (
                     <Card
                       key={item.path}
-                      onClick={() => handleNavigate(item.path, item.blocked)}
-                      className={`p-3 cursor-pointer hover:shadow-md transition-all border-slate-200/80 hover:border-slate-300 bg-white group flex flex-col justify-between min-h-[92px] relative overflow-hidden ${
-                        item.blocked ? "opacity-70" : ""
-                      }`}
+                      onClick={() => handleNavigate(item.path)}
+                      className="p-3 cursor-pointer hover:shadow-md transition-all border-slate-200/80 hover:border-slate-300 bg-white group flex flex-col justify-between min-h-[92px] relative overflow-hidden"
                     >
                       {/* Badge superior direito se existir */}
                       <div className="flex items-start justify-between gap-1 w-full">
@@ -349,11 +300,7 @@ export function HomePage() {
                         <span className="text-xs font-bold text-slate-800 group-hover:text-slate-900 leading-tight">
                           {item.label}
                         </span>
-                        {item.blocked ? (
-                          <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
-                        ) : (
-                          <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 group-hover:text-slate-600 transition-all flex-shrink-0" />
-                        )}
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 group-hover:text-slate-600 transition-all flex-shrink-0" />
                       </div>
                     </Card>
                   );

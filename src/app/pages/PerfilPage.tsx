@@ -1,23 +1,20 @@
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useNavigate } from "react-router";
-import { 
-  User, 
-  Building2, 
-  Mail, 
-  Phone, 
-  Calendar, 
-  LogOut, 
-  ChevronRight, 
-  RotateCcw, 
-  Edit2, 
-  DollarSign, 
-  ShieldCheck, 
-  Lock, 
-  Bell, 
+import {
+  User,
+  Building2,
+  Mail,
+  Phone,
+  Calendar,
+  LogOut,
+  ChevronRight,
+  RotateCcw,
+  Edit2,
+  ShieldCheck,
+  Lock,
+  Bell,
   HelpCircle,
   CheckCircle2,
-  AlertTriangle,
-  ArrowUpRight
 } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
@@ -70,8 +67,6 @@ export function PerfilPage() {
     { icon: HelpCircle, label: "Ajuda e Suporte", path: "/ajuda", badge: null },
   ];
 
-  const hasFinancialPending = user?.pendenciaFinanceira?.bloqueado;
-
   return (
     <div className="min-h-full bg-slate-50/70 pb-12">
       {/* Header com Gradient Moderno */}
@@ -111,75 +106,6 @@ export function PerfilPage() {
       </div>
 
       <div className="max-w-md mx-auto px-4 -mt-6 relative z-20 space-y-5">
-        
-        {/* Card Financeiro Moderno e Responsivo */}
-        <section>
-          <Card
-            onClick={() => navigate("/financeiro")}
-            className={`group relative overflow-hidden p-5 cursor-pointer transition-all duration-300 border shadow-md hover:shadow-xl ${
-              hasFinancialPending
-                ? "bg-gradient-to-br from-amber-50/90 via-orange-50/50 to-white border-amber-300 hover:border-amber-400"
-                : "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white border-slate-700 hover:border-slate-600"
-            }`}
-          >
-            {/* Efeito Brilho/Glow */}
-            <div className="absolute top-0 right-0 transform translate-x-4 -translate-y-4 w-28 h-28 bg-red-500/10 rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform" />
-
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3.5">
-                <div className={`p-3 rounded-2xl shadow-inner transition-transform group-hover:scale-105 ${
-                  hasFinancialPending
-                    ? "bg-amber-500 text-white shadow-amber-600/30"
-                    : "bg-gradient-to-br from-red-600 to-red-700 text-white shadow-red-900/40"
-                }`}>
-                  <DollarSign className="w-6 h-6" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className={`text-base font-bold ${hasFinancialPending ? "text-slate-900" : "text-white"}`}>
-                      Painel Financeiro
-                    </h4>
-                    {hasFinancialPending ? (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-sm">
-                        <AlertTriangle className="w-3 h-3" />
-                        Pendente
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        Em Dia
-                      </span>
-                    )}
-                  </div>
-                  <p className={`text-xs mt-1 ${hasFinancialPending ? "text-amber-900 font-medium" : "text-slate-300"}`}>
-                    {hasFinancialPending
-                      ? `Pendência: ${user.pendenciaFinanceira.valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`
-                      : "Faturas, extrato de boletos e comprovantes"}
-                  </p>
-                </div>
-              </div>
-
-              <div className={`p-2 rounded-full transition-colors ${
-                hasFinancialPending
-                  ? "bg-amber-100 text-amber-700 group-hover:bg-amber-200"
-                  : "bg-slate-700/60 text-slate-300 group-hover:bg-slate-700 group-hover:text-white"
-              }`}>
-                <ArrowUpRight className="w-4 h-4" />
-              </div>
-            </div>
-
-            {/* Footer do Card Financeiro */}
-            <div className={`mt-4 pt-3 border-t flex items-center justify-between text-xs ${
-              hasFinancialPending
-                ? "border-amber-200/70 text-amber-800"
-                : "border-slate-700/80 text-slate-400"
-            }`}>
-              <span>Acessar gestão de faturas</span>
-              <span className="font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                Ver detalhes <ChevronRight className="w-3.5 h-3.5" />
-              </span>
-            </div>
-          </Card>
-        </section>
 
         {/* Informações Pessoais */}
         <section>

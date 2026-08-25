@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { ArrowLeft, Plus, Trash2, AlertOctagon, CreditCard } from "lucide-react";
+import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
@@ -8,7 +8,6 @@ import { Textarea } from "@/app/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 import { Card } from "@/app/components/ui/card";
 import { toast } from "sonner";
-import { useAuth } from "@/app/contexts/AuthContext";
 
 interface ItemPedido {
   id: string;
@@ -19,7 +18,6 @@ interface ItemPedido {
 
 export function NovoPedidoPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [tipoCarne, setTipoCarne] = useState("");
   const [dataDesejada, setDataDesejada] = useState("");
   const [localEntrega, setLocalEntrega] = useState("");
@@ -27,8 +25,6 @@ export function NovoPedidoPage() {
   const [itens, setItens] = useState<ItemPedido[]>([
     { id: "1", corte: "", quantidade: "", unidade: "kg" }
   ]);
-
-  const isBloqueado = user?.pendenciaFinanceira?.bloqueado;
 
   const handleAddItem = () => {
     setItens([...itens, { id: Date.now().toString(), corte: "", quantidade: "", unidade: "kg" }]);
@@ -41,11 +37,6 @@ export function NovoPedidoPage() {
   };
 
   const handleSubmit = (status: "rascunho" | "enviado") => {
-    if (isBloqueado) {
-      toast.error("Envio de pedidos bloqueado por pendência financeira. Regularize no menu Financeiro.");
-      return;
-    }
-
     if (!tipoCarne) {
       toast.error("Selecione o tipo de carne");
       return;
@@ -77,30 +68,6 @@ export function NovoPedidoPage() {
       </div>
 
       <div className="max-w-md mx-auto px-4 py-6 space-y-4">
-        {isBloqueado && (
-          <Card className="border-red-300 bg-red-50 p-4 shadow-sm">
-            <div className="flex items-start gap-3">
-              <AlertOctagon className="w-5 h-5 text-[#c51d1f] flex-shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <h3 className="text-xs font-bold text-[#c51d1f] uppercase tracking-wide">
-                  Acesso Bloqueado para Envio de Pedidos
-                </h3>
-                <p className="text-xs text-gray-700 mt-1 leading-relaxed">
-                  Identificamos pendências financeiras em seu cadastro. O envio de novos pedidos está desabilitado até a regularização dos débitos.
-                </p>
-                <Button
-                  size="sm"
-                  onClick={() => navigate("/financeiro")}
-                  className="mt-3 bg-[#c51d1f] hover:bg-[#a01517] text-white text-xs font-bold"
-                >
-                  <CreditCard className="w-3.5 h-3.5 mr-1.5" />
-                  Ir para Financeiro & Regularizar
-                </Button>
-              </div>
-            </div>
-          </Card>
-        )}
-
         {/* Tipo de Carne */}
         <Card className="p-4 border-gray-200">
           <Label>Tipo de Carne *</Label>

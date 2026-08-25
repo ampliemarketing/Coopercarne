@@ -6,7 +6,7 @@ export interface Notification {
   title: string;
   message: string;
   type: "info" | "warning" | "success" | "error";
-  category: "pedido" | "preco" | "financeiro" | "comunicado" | "sistema";
+  category: "pedido" | "preco" | "comunicado" | "sistema";
   timestamp: Date;
   read: boolean;
   actionUrl?: string;
@@ -45,16 +45,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
       read: false,
       actionUrl: "/pedidos",
-    },
-    {
-      id: "3",
-      title: "Boleto Vencendo Hoje",
-      message: "Boleto #5678 no valor de R$ 15.450,00 vence hoje",
-      type: "warning",
-      category: "financeiro",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5),
-      read: false,
-      actionUrl: "/financeiro",
     },
     {
       id: "4",

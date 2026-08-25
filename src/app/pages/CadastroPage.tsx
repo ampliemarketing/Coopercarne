@@ -3,13 +3,17 @@ import { useNavigate } from "react-router";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
-import { Textarea } from "@/app/components/ui/textarea";
 import { Checkbox } from "@/app/components/ui/checkbox";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, AlertCircle, Phone } from "lucide-react";
 
 type Etapa = "dados" | "empresa" | "sucesso";
+
+// Mock temporário só para demonstrar visualmente os dois cenários (CNPJ encontrado / não encontrado).
+// Será substituído pela consulta real ao Supabase na etapa de integração.
+const CNPJS_CADASTRADOS_MOCK = ["03044201003285", "12345678000190"];
+
+const SUPORTE_TELEFONE = "(00) 00000-0000";
 
 export function CadastroPage() {
   const navigate = useNavigate();
@@ -23,14 +27,10 @@ export function CadastroPage() {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
-  // Dados da empresa
-  const [razaoSocial, setRazaoSocial] = useState("");
+  // Vínculo com empresa
   const [cnpj, setCnpj] = useState("");
-  const [tipoEstabelecimento, setTipoEstabelecimento] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [estado, setEstado] = useState("");
-  const [interesse, setInteresse] = useState("");
   const [aceitaTermos, setAceitaTermos] = useState(false);
+  const [empresaNaoEncontrada, setEmpresaNaoEncontrada] = useState(false);
 
   const formatCpf = (v: string) => {
     const digits = v.replace(/\D/g, "").slice(0, 11);
@@ -48,6 +48,9 @@ export function CadastroPage() {
     return digits.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
   };
 
+  // CNPJ é comparado e armazenado só com dígitos, sem pontuação.
+  const somenteDigitos = (v: string) => v.replace(/\D/g, "");
+
   const handleProximaEtapa = () => {
     if (!nome || !email || !cpf || !telefone || !senha || !confirmarSenha) {
       toast.error("Preencha todos os campos obrigatórios");
@@ -64,11 +67,28 @@ export function CadastroPage() {
     setEtapa("empresa");
   };
 
-  const handleEnviar = () => {
-    if (!razaoSocial || !cnpj || !tipoEstabelecimento || !cidade || !estado) {
-      toast.error("Preencha todos os campos obrigatórios");
+  const handleEnviarComCnpj = () => {
+    if (!cnpj) {
+      toast.error("Digite o CNPJ da sua empresa");
       return;
     }
+    if (!aceitaTermos) {
+      toast.error("Você precisa aceitar os termos para continuar");
+      return;
+    }
+
+    // Checagem feita só neste clique de envio (não em tempo real por digitação),
+    // para não expor um "existe/não existe" consultável em massa.
+    const encontrada = CNPJS_CADASTRADOS_MOCK.includes(somenteDigitos(cnpj));
+
+    if (encontrada) {
+      setEtapa("sucesso");
+    } else {
+      setEmpresaNaoEncontrada(true);
+    }
+  };
+
+  const handleAcessoPorCpf = () => {
     if (!aceitaTermos) {
       toast.error("Você precisa aceitar os termos para continuar");
       return;
@@ -124,7 +144,17 @@ export function CadastroPage() {
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <button
-            onClick={() => etapa === "empresa" ? setEtapa("dados") : navigate("/login")}
+            onClick={() => {
+              if (etapa === "empresa") {
+                if (empresaNaoEncontrada) {
+                  setEmpresaNaoEncontrada(false);
+                } else {
+                  setEtapa("dados");
+                }
+              } else {
+                navigate("/login");
+              }
+            }}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
@@ -132,7 +162,7 @@ export function CadastroPage() {
           <div>
             <h1 className="text-xl font-bold text-gray-900 tracking-wide">Criar Conta</h1>
             <p className="text-xs text-gray-500 mt-0.5">
-              {etapa === "dados" ? "Etapa 1 de 2 — Dados pessoais" : "Etapa 2 de 2 — Dados do estabelecimento"}
+              {etapa === "dados" ? "Etapa 1 de 2 — Dados pessoais" : "Etapa 2 de 2 — Vínculo com a empresa"}
             </p>
           </div>
         </div>
@@ -218,83 +248,23 @@ export function CadastroPage() {
           </div>
         )}
 
-        {/* Etapa 2: Dados empresa */}
-        {etapa === "empresa" && (
+        {/* Etapa 2: Vínculo por CNPJ (ou acesso direto por CPF) */}
+        {etapa === "empresa" && !empresaNaoEncontrada && (
           <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 space-y-5">
             <div>
-              <Label className="text-xs text-gray-600 uppercase tracking-wide">Razão Social *</Label>
-              <Input
-                placeholder="Nome da empresa"
-                value={razaoSocial}
-                onChange={(e) => setRazaoSocial(e.target.value)}
-                className="mt-2 border-gray-300"
-              />
-            </div>
-
-            <div>
-              <Label className="text-xs text-gray-600 uppercase tracking-wide">CNPJ *</Label>
+              <Label className="text-xs text-gray-600 uppercase tracking-wide">CNPJ da Empresa</Label>
               <Input
                 placeholder="00.000.000/0000-00"
                 value={cnpj}
                 onChange={(e) => setCnpj(formatCnpj(e.target.value))}
                 className="mt-2 border-gray-300"
               />
+              <p className="text-xs text-gray-400 mt-1.5">
+                Informe o CNPJ da empresa já cadastrada na cooperativa para vincular seu acesso a ela.
+              </p>
             </div>
 
-            <div>
-              <Label className="text-xs text-gray-600 uppercase tracking-wide">Tipo de Estabelecimento *</Label>
-              <Select value={tipoEstabelecimento} onValueChange={setTipoEstabelecimento}>
-                <SelectTrigger className="mt-2 border-gray-300">
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="supermercado">Supermercado</SelectItem>
-                  <SelectItem value="atacado">Atacado / Distribuidor</SelectItem>
-                  <SelectItem value="acougue">Açougue</SelectItem>
-                  <SelectItem value="restaurante">Restaurante / Alimentação</SelectItem>
-                  <SelectItem value="frigorifico">Frigorífico / Processadora</SelectItem>
-                  <SelectItem value="outro">Outro</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-gray-600 uppercase tracking-wide">Cidade *</Label>
-                <Input
-                  placeholder="Sua cidade"
-                  value={cidade}
-                  onChange={(e) => setCidade(e.target.value)}
-                  className="mt-2 border-gray-300"
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-gray-600 uppercase tracking-wide">Estado *</Label>
-                <Select value={estado} onValueChange={setEstado}>
-                  <SelectTrigger className="mt-2 border-gray-300">
-                    <SelectValue placeholder="UF" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map(uf => (
-                      <SelectItem key={uf} value={uf}>{uf}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <Label className="text-xs text-gray-600 uppercase tracking-wide">Interesse / Volume Mensal Estimado</Label>
-              <Textarea
-                placeholder="Descreva seu interesse e volume estimado de compra mensal..."
-                value={interesse}
-                onChange={(e) => setInteresse(e.target.value)}
-                className="mt-2 border-gray-300"
-                rows={3}
-              />
-            </div>
-
-            <div className="flex items-start gap-3 pt-2">
+            <div className="flex items-start gap-3 pt-1">
               <Checkbox
                 id="termos"
                 checked={aceitaTermos}
@@ -308,11 +278,61 @@ export function CadastroPage() {
             </div>
 
             <Button
-              onClick={handleEnviar}
+              onClick={handleEnviarComCnpj}
               className="w-full bg-[#c51d1f] hover:bg-[#a01517] text-white shadow-md mt-2"
             >
               Enviar Solicitação
             </Button>
+
+            <div className="relative py-1">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-white px-3 text-[11px] text-gray-400 uppercase tracking-wide">ou</span>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleAcessoPorCpf}
+              className="w-full border-gray-300 text-gray-700"
+            >
+              Sou pessoa física, sem empresa
+            </Button>
+          </div>
+        )}
+
+        {/* Empresa não encontrada */}
+        {etapa === "empresa" && empresaNaoEncontrada && (
+          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 space-y-5 text-center">
+            <div className="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+              <AlertCircle className="w-8 h-8 text-amber-600" />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 mb-2">Empresa não disponível</h3>
+              <p className="text-sm text-gray-600">
+                Não encontramos esse CNPJ cadastrado na cooperativa. Entre em contato com o suporte para verificar ou solicitar o cadastro da sua empresa.
+              </p>
+            </div>
+            <a
+              href={`tel:${SUPORTE_TELEFONE.replace(/\D/g, "")}`}
+              className="flex items-center justify-center gap-2 text-sm font-semibold text-[#c51d1f] py-2"
+            >
+              <Phone className="w-4 h-4" />
+              {SUPORTE_TELEFONE}
+            </a>
+
+            <div className="border-t border-gray-200 pt-5">
+              <p className="text-xs text-gray-500 mb-3">Enquanto isso, você ainda pode solicitar acesso individual:</p>
+              <Button
+                onClick={handleAcessoPorCpf}
+                className="w-full bg-[#c51d1f] hover:bg-[#a01517] text-white shadow-md"
+              >
+                Continuar acesso por CPF
+              </Button>
+            </div>
           </div>
         )}
 

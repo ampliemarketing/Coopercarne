@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { useEffect } from "react";
-import { Home, FileText, Calendar, Newspaper, User, Search, AlertTriangle, X } from "lucide-react";
+import { Home, FileText, Calendar, Newspaper, User, Search, X } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "@/app/components/ui/utils";
 import { useAuth } from "@/app/contexts/AuthContext";
@@ -8,9 +8,6 @@ import { useAnalytics } from "@/app/contexts/AnalyticsContext";
 import { useSearch } from "@/app/contexts/SearchContext";
 import { NotificationPanel } from "@/app/components/NotificationPanel";
 import { Onboarding } from "@/app/components/Onboarding";
-
-// Routes accessible even when financially blocked
-const ROTAS_LIBERADAS_BLOQUEIO = ["/financeiro", "/perfil", "/", "/noticias"];
 
 export function RootLayout() {
   const location = useLocation();
@@ -34,19 +31,6 @@ export function RootLayout() {
     }
   }, [user, isLoading, navigate]);
 
-  // Financial blocking: redirect to financeiro if on a blocked route
-  useEffect(() => {
-    if (!user) return;
-    const bloqueado = user.pendenciaFinanceira?.bloqueado;
-    if (bloqueado) {
-      const rotaLiberada = ROTAS_LIBERADAS_BLOQUEIO.some(r => location.pathname === r || location.pathname.startsWith(r + "/") && r !== "/");
-      const isRaiz = location.pathname === "/";
-      if (!rotaLiberada && !isRaiz) {
-        navigate("/financeiro");
-      }
-    }
-  }, [user, location.pathname, navigate]);
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-white">
@@ -62,11 +46,9 @@ export function RootLayout() {
     return null;
   }
 
-  const isBloqueado = user.pendenciaFinanceira?.bloqueado;
-
   const navItems = [
-    { icon: FileText, label: "Pedidos", path: "/pedidos", bloqueado: isBloqueado },
-    { icon: Calendar, label: "Abate", path: "/agenda-abate", bloqueado: isBloqueado },
+    { icon: FileText, label: "Pedidos", path: "/pedidos" },
+    { icon: Calendar, label: "Abate", path: "/agenda-abate" },
     { icon: Home, label: "Início", path: "/" },
     { icon: Newspaper, label: "Notícias", path: "/noticias" },
     { icon: User, label: "Perfil", path: "/perfil" },
@@ -112,12 +94,6 @@ export function RootLayout() {
             <div className="flex items-center justify-between w-full">
               <h1 className="text-lg font-bold text-white tracking-wide">COOPERCARNE</h1>
               <div className="flex items-center gap-2">
-                {isBloqueado && (
-                  <div className="flex items-center gap-1.5 bg-white/20 rounded-full px-2.5 py-1">
-                    <AlertTriangle className="w-3.5 h-3.5 text-white" />
-                    <span className="text-white text-[10px] font-bold uppercase tracking-wide">Bloqueado</span>
-                  </div>
-                )}
                 <button
                   onClick={() => setIsSearchOpen(true)}
                   className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
@@ -132,24 +108,6 @@ export function RootLayout() {
         </div>
       </header>
 
-      {/* Financial blocking banner */}
-      {isBloqueado && (
-        <div
-          className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 cursor-pointer hover:bg-amber-100 transition-colors"
-          onClick={() => navigate("/financeiro")}
-        >
-          <div className="max-w-md mx-auto flex items-center gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-amber-800">Acesso restrito por pendência financeira</p>
-              <p className="text-[10px] text-amber-600 mt-0.5">
-                Total em aberto: {user.pendenciaFinanceira.valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} · Toque para regularizar
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pb-24">
         <Outlet />
@@ -163,21 +121,14 @@ export function RootLayout() {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
-              const isItemBloqueado = item.bloqueado;
 
               return (
                 <button
                   key={item.path}
-                  onClick={() => {
-                    if (isItemBloqueado) {
-                      navigate("/financeiro");
-                    } else {
-                      navigate(item.path);
-                    }
-                  }}
+                  onClick={() => navigate(item.path)}
                   className={cn(
                     "flex flex-col items-center justify-center flex-1 h-full relative transition-colors duration-200 btn-interactive",
-                    isActive ? "text-[#c51d1f]" : isItemBloqueado ? "text-amber-200" : "text-white/70 hover:text-white"
+                    isActive ? "text-[#c51d1f]" : "text-white/70 hover:text-white"
                   )}
                 >
                   {/* Sliding Active Pill & Circle Background using Framer Motion */}
@@ -207,11 +158,6 @@ export function RootLayout() {
                         {item.label}
                       </span>
                     </>
-                  )}
-
-                  {/* Lock Indicator */}
-                  {isItemBloqueado && !isActive && (
-                    <span className="absolute top-2 right-4 w-2 h-2 bg-amber-300 rounded-full animate-pulse" />
                   )}
                 </button>
               );
