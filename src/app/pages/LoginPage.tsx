@@ -33,8 +33,14 @@ export function LoginPage() {
       await login(email, senha);
       toast.success("Login realizado com sucesso!");
       navigate("/");
-    } catch (error) {
-      toast.error("Erro ao fazer login");
+    } catch (error: any) {
+      let msg = "Erro ao fazer login. Verifique suas credenciais.";
+      if (error?.message?.includes("Invalid login credentials")) {
+        msg = "E-mail ou senha incorretos.";
+      } else if (error?.message) {
+        msg = error.message;
+      }
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
