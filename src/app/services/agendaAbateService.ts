@@ -13,6 +13,7 @@ export interface Agendamento {
   quantidadeProcessada?: number;
   status: AgendamentoStatus;
   observacoes?: string;
+  anexoNome?: string; // Romaneio/documento anexado pela COOPERCARNE (painel administrativo)
 }
 
 export interface CriarAgendamentoInput {
@@ -49,6 +50,7 @@ function parseAgendamentoRow(row: any): Agendamento {
     quantidadeProcessada: row.quantidade_processada ?? undefined,
     status: (row.status_operacional || "reservado") as AgendamentoStatus,
     observacoes: obs.includes("OBS:") ? obs.match(/OBS:\s*(.+)$/i)?.[1] : undefined,
+    anexoNome: obs.includes("ANEXO:") ? obs.match(/ANEXO:\s*([^\s|;]+)/i)?.[1] : undefined,
   };
 }
 
@@ -60,6 +62,21 @@ async function getCapacidadeDoDia(dataAbate: string, tipoAnimalDb: string) {
     .eq("tipo_animal", tipoAnimalDb)
     .maybeSingle();
   return data;
+}
+
+/**
+ * Decora a lista com um anexo de demonstração no primeiro agendamento finalizado
+ * que ainda não tenha um anexo real vindo do banco. O painel administrativo (tela
+ * "Romaneios") ainda anexa documentos só localmente (visual), sem gravar no Supabase,
+ * então isso é só para mostrar como a indicação de anexo fica pro cooperado/terceiro.
+ * Remover quando o upload do painel for conectado de verdade ao Storage.
+ */
+function aplicarAnexoDemo(agendamentos: Agendamento[]): Agendamento[] {
+  const idx = agendamentos.findIndex((a) => a.status === "finalizado" && !a.anexoNome);
+  if (idx === -1) return agendamentos;
+  return agendamentos.map((a, i) =>
+    i === idx ? { ...a, anexoNome: `romaneio-${a.id.slice(0, 8)}.pdf` } : a
+  );
 }
 
 export const agendaAbateService = {
@@ -76,7 +93,7 @@ export const agendaAbateService = {
       throw error;
     }
 
-    return (data || []).map(parseAgendamentoRow);
+    return aplicarAnexoDemo((data || []).map(parseAgendamentoRow));
   },
 
   async criarAgendamento(input: CriarAgendamentoInput): Promise<Agendamento> {

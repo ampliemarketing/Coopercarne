@@ -9,11 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card } from "@/app/components/ui/card";
 import { toast } from "sonner";
 
-interface ItemPedido {
+const TIPOS_UNIDADE_CARCACA = ["Carcaça Inteira", "Meia Carcaça (Banda)"];
+
+interface UnidadeCarcaca {
   id: string;
-  corte: string;
+  tipo: string;
   quantidade: string;
-  unidade: string;
 }
 
 export function NovoPedidoPage() {
@@ -22,17 +23,17 @@ export function NovoPedidoPage() {
   const [dataDesejada, setDataDesejada] = useState("");
   const [localEntrega, setLocalEntrega] = useState("");
   const [observacoes, setObservacoes] = useState("");
-  const [itens, setItens] = useState<ItemPedido[]>([
-    { id: "1", corte: "", quantidade: "", unidade: "kg" }
+  const [unidades, setUnidades] = useState<UnidadeCarcaca[]>([
+    { id: "1", tipo: "", quantidade: "" }
   ]);
 
-  const handleAddItem = () => {
-    setItens([...itens, { id: Date.now().toString(), corte: "", quantidade: "", unidade: "kg" }]);
+  const handleAddUnidade = () => {
+    setUnidades([...unidades, { id: Date.now().toString(), tipo: "", quantidade: "" }]);
   };
 
-  const handleRemoveItem = (id: string) => {
-    if (itens.length > 1) {
-      setItens(itens.filter(item => item.id !== id));
+  const handleRemoveUnidade = (id: string) => {
+    if (unidades.length > 1) {
+      setUnidades(unidades.filter(unidade => unidade.id !== id));
     }
   };
 
@@ -43,9 +44,9 @@ export function NovoPedidoPage() {
     }
 
     if (status === "enviado") {
-      const hasEmptyItems = itens.some(item => !item.corte || !item.quantidade);
-      if (hasEmptyItems) {
-        toast.error("Preencha todos os itens do pedido");
+      const hasEmptyUnidades = unidades.some(unidade => !unidade.tipo || !unidade.quantidade);
+      if (hasEmptyUnidades) {
+        toast.error("Preencha todas as unidades de carcaça do pedido");
         return;
       }
     }
@@ -83,24 +84,24 @@ export function NovoPedidoPage() {
           </Select>
         </Card>
 
-        {/* Itens do Pedido */}
+        {/* Unidades de Carcaça */}
         <Card className="p-4 border-gray-200">
           <div className="flex items-center justify-between mb-4">
-            <Label>Itens do Pedido</Label>
-            <Button onClick={handleAddItem} size="sm" variant="outline">
+            <Label>Unidades de Carcaça</Label>
+            <Button onClick={handleAddUnidade} size="sm" variant="outline">
               <Plus className="w-4 h-4 mr-1" />
               Adicionar
             </Button>
           </div>
 
           <div className="space-y-3">
-            {itens.map((item, index) => (
-              <div key={item.id} className="p-3 border border-gray-200 rounded-lg space-y-2">
+            {unidades.map((unidade, index) => (
+              <div key={unidade.id} className="p-3 border border-gray-200 rounded-lg space-y-2">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Item {index + 1}</span>
-                  {itens.length > 1 && (
+                  <span className="text-sm font-medium">Unidade {index + 1}</span>
+                  {unidades.length > 1 && (
                     <button
-                      onClick={() => handleRemoveItem(item.id)}
+                      onClick={() => handleRemoveUnidade(unidade.id)}
                       className="text-red-500 hover:text-red-700"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -108,46 +109,35 @@ export function NovoPedidoPage() {
                   )}
                 </div>
 
-                <div>
-                  <Input
-                    placeholder="Corte (ex: Dianteiro, Traseiro, Alcatra...)"
-                    value={item.corte}
-                    onChange={(e) => {
-                      const newItens = [...itens];
-                      newItens[index].corte = e.target.value;
-                      setItens(newItens);
-                    }}
-                  />
-                </div>
-
                 <div className="grid grid-cols-2 gap-2">
-                  <Input
-                    type="number"
-                    placeholder="Quantidade"
-                    value={item.quantidade}
-                    onChange={(e) => {
-                      const newItens = [...itens];
-                      newItens[index].quantidade = e.target.value;
-                      setItens(newItens);
-                    }}
-                  />
                   <Select
-                    value={item.unidade}
+                    value={unidade.tipo}
                     onValueChange={(value) => {
-                      const newItens = [...itens];
-                      newItens[index].unidade = value;
-                      setItens(newItens);
+                      const newUnidades = [...unidades];
+                      newUnidades[index].tipo = value;
+                      setUnidades(newUnidades);
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Tipo de Unidade" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="kg">Kg</SelectItem>
-                      <SelectItem value="unidades">Unidades</SelectItem>
-                      <SelectItem value="@">@ (Arroba)</SelectItem>
+                      {TIPOS_UNIDADE_CARCACA.map((tipo) => (
+                        <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+                  <Input
+                    type="number"
+                    min={1}
+                    placeholder="Quantidade"
+                    value={unidade.quantidade}
+                    onChange={(e) => {
+                      const newUnidades = [...unidades];
+                      newUnidades[index].quantidade = e.target.value;
+                      setUnidades(newUnidades);
+                    }}
+                  />
                 </div>
               </div>
             ))}

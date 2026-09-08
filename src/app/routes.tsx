@@ -11,6 +11,7 @@ import { AgendaAbatePage } from "@/app/pages/AgendaAbatePage";
 import { AgendaEntregaPage } from "@/app/pages/AgendaEntregaPage";
 import { ComunicacaoPage } from "@/app/pages/ComunicacaoPage";
 import { PrecosPage } from "@/app/pages/PrecosPage";
+import { CalculadoraPage } from "@/app/pages/CalculadoraPage";
 import { CotacoesPage } from "@/app/pages/CotacoesPage";
 import { NovaCotacaoPage } from "@/app/pages/NovaCotacaoPage";
 import { SugestoesPage } from "@/app/pages/SugestoesPage";
@@ -45,6 +46,7 @@ export const router = createBrowserRouter([
           { path: "agenda-entrega", Component: AgendaEntregaPage },
           { path: "comunicacao", Component: ComunicacaoPage },
           { path: "precos", Component: PrecosPage },
+          { path: "calculadora", Component: CalculadoraPage },
           { path: "cotacoes", Component: CotacoesPage },
           { path: "cotacoes/nova", Component: NovaCotacaoPage },
           { path: "sugestoes", Component: SugestoesPage },

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronRight, Plus, CheckCircle2, XCircle, Truck, AlertTriangle, Bell, Download, Loader2 } from "lucide-react";
+import { ChevronRight, Plus, CheckCircle2, XCircle, Truck, AlertTriangle, Bell, Download, Loader2, Paperclip } from "lucide-react";
 import { exportToPDFPrint } from "@/app/utils/exportUtils";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
@@ -437,6 +437,17 @@ export function AgendaAbatePage() {
                           )}
                           {agendamento.status === "finalizado" && agendamento.quantidadeProcessada !== undefined && (
                             <p className="text-[11px] text-gray-500 mt-0.5">Processado: {agendamento.quantidadeProcessada} cab.</p>
+                          )}
+                          {agendamento.status === "finalizado" && agendamento.anexoNome && (
+                            <button
+                              onClick={() =>
+                                toast.info(`Abrindo "${agendamento.anexoNome}" (visual — sem arquivo real ainda).`)
+                              }
+                              className="flex items-center gap-1.5 text-[11px] text-[#c51d1f] font-semibold mt-1"
+                            >
+                              <Paperclip className="w-3 h-3" />
+                              Documento anexado pela COOPERCARNE
+                            </button>
                           )}
                         </div>
                         {agendamento.status === "finalizado" && (

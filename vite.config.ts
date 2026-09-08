@@ -30,4 +30,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    host: true, // expõe na rede local (0.0.0.0), não só em localhost
+  },
 })

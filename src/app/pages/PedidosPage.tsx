@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Plus, ChevronRight, Filter, Download, Copy, XCircle, CheckCircle2, Clock, Truck, FileText, Package } from "lucide-react";
+import { Plus, ChevronRight, Filter, Download, Copy, XCircle, CheckCircle2, Clock, Truck, FileText, Package, Paperclip } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Badge } from "@/app/components/ui/badge";
@@ -10,10 +10,8 @@ import { toast } from "sonner";
 import { useSearch } from "@/app/contexts/SearchContext";
 
 interface PedidoItemDetalhe {
-  corte: string;
+  tipoUnidade: string;
   quantidade: string;
-  precoUnitario: string;
-  subtotal: string;
 }
 
 interface Pedido {
@@ -22,11 +20,11 @@ interface Pedido {
   dataEntregaDesejada: string;
   tipo: string;
   status: "rascunho" | "enviado" | "em separação" | "faturado" | "entregue" | "cancelado";
-  total: string;
   itensCount: number;
   localEntrega: string;
   observacoes?: string;
   detalhesItens: PedidoItemDetalhe[];
+  anexoNome?: string; // Comprovante/anexo enviado pela COOPERCARNE
 }
 
 const mockPedidosIniciais: Pedido[] = [
@@ -36,14 +34,12 @@ const mockPedidosIniciais: Pedido[] = [
     dataEntregaDesejada: "2026-02-02",
     tipo: "Bovina",
     status: "em separação",
-    total: "R$ 12.500,00",
-    itensCount: 3,
+    itensCount: 2,
     localEntrega: "Matriz - Rua Principal, 123",
     observacoes: "Entregar no período da manhã até as 10h.",
     detalhesItens: [
-      { corte: "Alcatra Completa", quantidade: "150 kg", precoUnitario: "R$ 45,00/kg", subtotal: "R$ 6.750,00" },
-      { corte: "Contrafilé Especial", quantidade: "100 kg", precoUnitario: "R$ 42,50/kg", subtotal: "R$ 4.250,00" },
-      { corte: "Costela Minga", quantidade: "60 kg", precoUnitario: "R$ 25,00/kg", subtotal: "R$ 1.500,00" },
+      { tipoUnidade: "Carcaça Inteira", quantidade: "3 un." },
+      { tipoUnidade: "Meia Carcaça (Banda)", quantidade: "5 un." },
     ],
   },
   {
@@ -52,14 +48,13 @@ const mockPedidosIniciais: Pedido[] = [
     dataEntregaDesejada: "2026-01-30",
     tipo: "Suína",
     status: "faturado",
-    total: "R$ 8.200,00",
-    itensCount: 2,
+    itensCount: 1,
     localEntrega: "Filial 1 - Av. Central, 456",
     observacoes: "Embalagem a vácuo padrão.",
     detalhesItens: [
-      { corte: "Pernil desossado", quantidade: "200 kg", precoUnitario: "R$ 26,00/kg", subtotal: "R$ 5.200,00" },
-      { corte: "Lombo Especial", quantidade: "100 kg", precoUnitario: "R$ 30,00/kg", subtotal: "R$ 3.000,00" },
+      { tipoUnidade: "Carcaça Inteira", quantidade: "8 un." },
     ],
+    anexoNome: "nota-fiscal-PED002.pdf",
   },
   {
     id: "PED003",
@@ -67,15 +62,12 @@ const mockPedidosIniciais: Pedido[] = [
     dataEntregaDesejada: "2026-01-28",
     tipo: "Bovina",
     status: "entregue",
-    total: "R$ 15.300,00",
-    itensCount: 4,
+    itensCount: 1,
     localEntrega: "Matriz - Rua Principal, 123",
     detalhesItens: [
-      { corte: "Filé Mignon", quantidade: "80 kg", precoUnitario: "R$ 75,00/kg", subtotal: "R$ 6.000,00" },
-      { corte: "Picanha A", quantidade: "50 kg", precoUnitario: "R$ 90,00/kg", subtotal: "R$ 4.500,00" },
-      { corte: "Acém", quantidade: "120 kg", precoUnitario: "R$ 25,00/kg", subtotal: "R$ 3.000,00" },
-      { corte: "Músculo", quantidade: "90 kg", precoUnitario: "R$ 20,00/kg", subtotal: "R$ 1.800,00" },
+      { tipoUnidade: "Meia Carcaça (Banda)", quantidade: "10 un." },
     ],
+    anexoNome: "comprovante-entrega-PED003.pdf",
   },
   {
     id: "PED004",
@@ -83,12 +75,11 @@ const mockPedidosIniciais: Pedido[] = [
     dataEntregaDesejada: "2026-01-26",
     tipo: "Ovina",
     status: "rascunho",
-    total: "R$ 3.600,00",
     itensCount: 1,
     localEntrega: "Retirar no Frigorífico",
     observacoes: "Rascunho pendente de confirmação de quantidade.",
     detalhesItens: [
-      { corte: "Pernil de Cordeiro", quantidade: "60 kg", precoUnitario: "R$ 60,00/kg", subtotal: "R$ 3.600,00" },
+      { tipoUnidade: "Carcaça Inteira", quantidade: "4 un." },
     ],
   },
 ];
@@ -213,8 +204,8 @@ export function PedidosPage() {
                       <span className="font-medium text-gray-900">{pedido.tipo}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500 uppercase tracking-wide">Itens</span>
-                      <span className="font-medium text-gray-900">{pedido.itensCount} corte(s)</span>
+                      <span className="text-gray-500 uppercase tracking-wide">Unidades</span>
+                      <span className="font-medium text-gray-900">{pedido.itensCount} unidade(s)</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500 uppercase tracking-wide">Entrega</span>
@@ -224,11 +215,14 @@ export function PedidosPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between mt-3">
-                    <div>
-                      <p className="text-[10px] text-gray-400 uppercase tracking-wide">Valor Total</p>
-                      <p className="text-lg font-bold text-[#c51d1f]">{pedido.total}</p>
+                  {pedido.anexoNome && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-[#c51d1f] font-semibold mt-2">
+                      <Paperclip className="w-3 h-3" />
+                      Comprovante anexado pela COOPERCARNE
                     </div>
+                  )}
+
+                  <div className="flex items-center justify-end mt-3 pt-3 border-t border-gray-100">
                     <div className="flex items-center text-xs font-semibold text-[#c51d1f] gap-1">
                       Ver detalhes
                       <ChevronRight className="w-4 h-4" />
@@ -333,33 +327,44 @@ export function PedidosPage() {
                 )}
               </div>
 
-              {/* Itens do Pedido */}
+              {/* Unidades de Carcaça do Pedido */}
               <div>
                 <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
-                  Itens do Pedido ({pedidoSelecionado.detalhesItens.length})
+                  Unidades de Carcaça ({pedidoSelecionado.detalhesItens.length})
                 </h4>
                 <div className="divide-y divide-gray-100 border border-gray-200 rounded-xl overflow-hidden">
                   {pedidoSelecionado.detalhesItens.map((item, i) => (
                     <div key={i} className="p-3 bg-white flex items-center justify-between">
-                      <div>
-                        <p className="text-xs font-bold text-gray-900">{item.corte}</p>
-                        <p className="text-[11px] text-gray-500 mt-0.5">
-                          {item.quantidade} · {item.precoUnitario}
-                        </p>
-                      </div>
-                      <span className="text-xs font-bold text-gray-900">
-                        {item.subtotal}
+                      <p className="text-xs font-bold text-gray-900">{item.tipoUnidade}</p>
+                      <span className="text-xs font-semibold text-gray-700">
+                        {item.quantidade}
                       </span>
                     </div>
                   ))}
-                  <div className="p-3 bg-gray-50 flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase text-gray-700">Total do Pedido</span>
-                    <span className="text-base font-extrabold text-[#c51d1f]">
-                      {pedidoSelecionado.total}
-                    </span>
-                  </div>
                 </div>
               </div>
+
+              {/* Comprovante / Anexo enviado pela COOPERCARNE */}
+              {pedidoSelecionado.anexoNome && (
+                <div>
+                  <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
+                    Comprovante / Anexo
+                  </h4>
+                  <button
+                    onClick={() => toast.info(`Abrindo "${pedidoSelecionado.anexoNome}" (visual — sem arquivo real ainda).`)}
+                    className="w-full flex items-center gap-2.5 p-3 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition-colors"
+                  >
+                    <div className="bg-white p-2 rounded-lg border border-red-200">
+                      <Paperclip className="w-4 h-4 text-[#c51d1f]" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <p className="text-xs font-bold text-gray-900 truncate">{pedidoSelecionado.anexoNome}</p>
+                      <p className="text-[11px] text-gray-500">Enviado pela COOPERCARNE</p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  </button>
+                </div>
+              )}
 
               {/* Ações */}
               <div className="space-y-2 pt-2">

@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Newspaper,
   Truck,
+  Calculator,
 } from "lucide-react";
 import { Card } from "@/app/components/ui/card";
 import { Badge } from "@/app/components/ui/badge";
@@ -82,6 +83,7 @@ export function HomePage() {
       titulo: "Mercado",
       itens: [
         { icon: DollarSign, label: "Preços", path: "/precos", badge: "Atualizado", badgeColor: "bg-red-100 text-[#c51d1f] font-bold border border-red-200", iconBg: "bg-red-50 text-[#c51d1f]" },
+        { icon: Calculator, label: "Calculadora", path: "/calculadora", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]" },
       ],
     },
     {
