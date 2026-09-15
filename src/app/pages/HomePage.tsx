@@ -62,9 +62,8 @@ export function HomePage() {
   const navigate = useNavigate();
 
   const quickActions = [
-    { icon: FileText, label: "Novo Pedido", path: "/pedidos/novo" },
     { icon: Calendar, label: "Agendar Abate", path: "/agenda-abate" },
-    { icon: Truck, label: "Ag. Entrega", path: "/agenda-entrega" },
+    { icon: Truck, label: "Novo Pedido", path: "/agenda-entrega" },
     { icon: HelpCircle, label: "Abrir Chamado", path: "/chamados/novo" },
   ];
 
@@ -75,7 +74,7 @@ export function HomePage() {
       itens: [
         { icon: FileText, label: "Meus Pedidos", path: "/pedidos", badge: "3", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]" },
         { icon: Calendar, label: "Agenda Abate", path: "/agenda-abate", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]" },
-        { icon: Truck, label: "Agenda Entrega", path: "/agenda-entrega", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]" },
+        { icon: Truck, label: "Novo Pedido", path: "/agenda-entrega", badge: null, badgeColor: null, iconBg: "bg-red-50 text-[#c51d1f]" },
         { icon: MessageSquare, label: "Cotações", path: "/cotacoes", badge: "1", badgeColor: "bg-[#c51d1f] text-white", iconBg: "bg-red-50 text-[#c51d1f]" },
       ],
     },
@@ -146,7 +145,7 @@ export function HomePage() {
         {/* Quick Actions */}
         <section>
           <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Acesso Rápido</h3>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-2.5">
             {quickActions.map((action) => {
               const Icon = action.icon;
               return (

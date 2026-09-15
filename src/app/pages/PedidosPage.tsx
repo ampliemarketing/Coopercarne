@@ -151,7 +151,7 @@ export function PedidosPage() {
       <div className="max-w-md mx-auto px-4 py-6 space-y-4">
         {/* New Order Button */}
         <Button
-          onClick={() => navigate("/pedidos/novo")}
+          onClick={() => navigate("/agenda-entrega")}
           className="w-full bg-[#c51d1f] hover:bg-[#a01517] text-white shadow-md font-bold py-5"
         >
           <Plus className="w-5 h-5 mr-2" />

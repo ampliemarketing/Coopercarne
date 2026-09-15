@@ -35,29 +35,21 @@ const statusConfig: Record<EntregaStatus, { label: string; color: string }> = {
   cancelado: { label: "Cancelado", color: "bg-red-100 text-red-800 border border-red-300 font-semibold" },
 };
 
-const itensDisponiveisMap: Record<string, Array<{ id: string; label: string; desc: string }>> = {
+const itensDisponiveisMap: Record<string, Array<{ id: string; label: string }>> = {
   Bovino: [
-    { id: "carcaca", label: "Carcaça Bovino", desc: "Meia carcaça ou quartos" },
-    { id: "figado", label: "Fígado (Miúdo)", desc: "Fígado bovino resfriado" },
-    { id: "coracao", label: "Coração (Miúdo)", desc: "Coração bovino" },
-    { id: "outros_miudos", label: "Outros Miúdos", desc: "Língua, rins, moela, bucho e mocotó" },
-    { id: "couro", label: "Couro", desc: "Couro bovino verde" },
-    { id: "ossos_gordura", label: "Ossos & Sebo", desc: "Ossos, gordura e aparas" },
+    { id: "figado_bovino", label: "Fígado bovino" },
+    { id: "coracao_suino_bovino", label: "Coração suíno e bovino" },
+    { id: "lingua_bovina_suina", label: "Língua bovina e suína" },
+    { id: "mocoto_bovino", label: "Mocotó bovino" },
+    { id: "rumen_bovino", label: "Rúmen bovino" },
+    { id: "tendao_congelado_bovino", label: "Tendão congelado bovino" },
   ],
   Suino: [
-    { id: "carcaca", label: "Carcaça Suína", desc: "Carcaça suína inteira ou dividida" },
-    { id: "figado", label: "Fígado (Miúdo)", desc: "Fígado suíno" },
-    { id: "coracao", label: "Coração (Miúdo)", desc: "Coração suíno" },
-    { id: "outros_miudos", label: "Outros Miúdos", desc: "Pulmão, mocotó, orelha e língua" },
-    { id: "toucinho", label: "Toucinho / Banha", desc: "Toucinho fresco com pele" },
+    { id: "coracao_suino_bovino", label: "Coração suíno e bovino" },
+    { id: "lingua_bovina_suina", label: "Língua bovina e suína" },
+    { id: "tripa_suina", label: "Tripa suína" },
   ],
-  Ovino: [
-    { id: "carcaca", label: "Carcaça Ovina / Cordeiro", desc: "Carcaça inteira" },
-    { id: "figado", label: "Fígado (Miúdo)", desc: "Fígado ovino" },
-    { id: "coracao", label: "Coração (Miúdo)", desc: "Coração ovino" },
-    { id: "outros_miudos", label: "Outros Miúdos", desc: "Rins e miúdos finos" },
-    { id: "pele", label: "Pele / Lã", desc: "Pele com lã" },
-  ],
+  Ovino: [],
 };
 
 const initialEntregas: AgendamentoEntrega[] = [
@@ -65,7 +57,7 @@ const initialEntregas: AgendamentoEntrega[] = [
     id: "1",
     dataEntrega: "2026-02-06",
     tipoAnimal: "Bovino",
-    itens: ["Carcaça", "Miúdos (fígado, coração, língua, rins)"],
+    itens: ["Fígado bovino", "Coração suíno e bovino"],
     unidades: 2,
     enderecoEntrega: "Av. Brasil, 1500 - Supermercado Silva",
     status: "agendado",
@@ -160,14 +152,21 @@ export function AgendaEntregaPage() {
               {tipoAnimal && (
                 <div>
                   <Label className="text-xs text-gray-600 uppercase tracking-wide font-semibold mb-2 block">
-                    Flegar Itens para Entrega *
+                    Itens para Entrega *
                   </Label>
+                  {itensDisponiveis.length === 0 ? (
+                    <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 text-center">
+                      <p className="text-xs text-gray-500">
+                        Nenhum item cadastrado para Ovino ainda.
+                      </p>
+                    </div>
+                  ) : (
                   <div className="space-y-2 border border-gray-200 rounded-xl p-3 bg-gray-50">
                     {itensDisponiveis.map((item) => (
                       <div
                         key={item.id}
                         onClick={() => toggleItem(item.label)}
-                        className={`flex items-start gap-3 p-2.5 rounded-lg border transition-all cursor-pointer ${
+                        className={`flex items-center gap-3 p-2.5 rounded-lg border transition-all cursor-pointer ${
                           itensSelecionados.includes(item.label)
                             ? "bg-red-50/70 border-red-200 text-gray-900"
                             : "bg-white border-gray-200 hover:bg-gray-100/80"
@@ -177,22 +176,17 @@ export function AgendaEntregaPage() {
                           id={item.id}
                           checked={itensSelecionados.includes(item.label)}
                           onCheckedChange={() => toggleItem(item.label)}
-                          className="mt-0.5"
                         />
-                        <div className="flex-1">
-                          <label
-                            htmlFor={item.id}
-                            className="text-xs font-bold text-gray-900 block cursor-pointer"
-                          >
-                            {item.label}
-                          </label>
-                          <span className="text-[11px] text-gray-500 block leading-tight">
-                            {item.desc}
-                          </span>
-                        </div>
+                        <label
+                          htmlFor={item.id}
+                          className="text-xs font-bold text-gray-900 cursor-pointer flex-1"
+                        >
+                          {item.label}
+                        </label>
                       </div>
                     ))}
                   </div>
+                  )}
                 </div>
               )}
 

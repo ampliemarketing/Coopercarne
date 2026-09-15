@@ -6,7 +6,6 @@ import { HomePage } from "@/app/pages/HomePage";
 import { LoginPage } from "@/app/pages/LoginPage";
 import { CadastroPage } from "@/app/pages/CadastroPage";
 import { PedidosPage } from "@/app/pages/PedidosPage";
-import { NovoPedidoPage } from "@/app/pages/NovoPedidoPage";
 import { AgendaAbatePage } from "@/app/pages/AgendaAbatePage";
 import { AgendaEntregaPage } from "@/app/pages/AgendaEntregaPage";
 import { ComunicacaoPage } from "@/app/pages/ComunicacaoPage";
@@ -41,7 +40,6 @@ export const router = createBrowserRouter([
         children: [
           { index: true, Component: HomePage },
           { path: "pedidos", Component: PedidosPage },
-          { path: "pedidos/novo", Component: NovoPedidoPage },
           { path: "agenda-abate", Component: AgendaAbatePage },
           { path: "agenda-entrega", Component: AgendaEntregaPage },
           { path: "comunicacao", Component: ComunicacaoPage },
