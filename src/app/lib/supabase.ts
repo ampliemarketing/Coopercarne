@@ -14,18 +14,23 @@ const isPlaceholder = (val?: string) => {
   );
 };
 
-export const isConfigured = !isPlaceholder(rawUrl) && !isPlaceholder(rawAnonKey);
+const supabaseUrl = !isPlaceholder(rawUrl) ? rawUrl! : "https://placeholder-coopercarne.supabase.co";
+const supabaseAnonKey = !isPlaceholder(rawAnonKey)
+  ? rawAnonKey!
+  : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder";
+
+// Checado em cima de supabaseUrl/supabaseAnonKey (não de rawUrl/rawAnonKey):
+// no build via Docker essas variáveis não existem em build-time (o entrypoint.sh
+// injeta os valores reais depois, via substituição de string em runtime), então
+// checar os valores "raw" ficaria sempre travado em `false` mesmo depois da
+// substituição rodar com sucesso.
+export const isConfigured = !isPlaceholder(supabaseUrl) && !isPlaceholder(supabaseAnonKey);
 
 if (!isConfigured) {
   console.warn(
     "[COOPERCARNE App] Credenciais do Supabase não configuradas. Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no .env."
   );
 }
-
-const supabaseUrl = !isPlaceholder(rawUrl) ? rawUrl! : "https://placeholder-coopercarne.supabase.co";
-const supabaseAnonKey = !isPlaceholder(rawAnonKey)
-  ? rawAnonKey!
-  : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder";
 
 // Mesmo projeto Supabase usado pelo painel administrativo (coopercarne-sistema).
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
