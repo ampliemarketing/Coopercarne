@@ -1,0 +1,13 @@
+node_modules
+dist
+dist-ssr
+dist.zip
+.git
+.gitignore
+
+# Nunca copiar .env para a imagem: as credenciais de build devem vir via
+# variáveis de ambiente de runtime (injetadas pelo entrypoint.sh), não do
+# .env local do desenvolvedor.
+.env
+.env.local
+.env.*.local
