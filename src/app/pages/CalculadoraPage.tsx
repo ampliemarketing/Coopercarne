@@ -102,7 +102,7 @@ export function CalculadoraPage() {
           </div>
           <Card className="border-gray-200 p-4 space-y-4">
             <div>
-              <Label className="text-gray-700 font-medium">Peso do Animal (kg)</Label>
+              <Label className="text-gray-700 font-medium">Peso do Animal Vivo (kg)</Label>
               <Input
                 type="number"
                 placeholder="Ex: 500"
@@ -115,7 +115,7 @@ export function CalculadoraPage() {
             {modoInvertido ? (
               <>
                 <div>
-                  <Label className="text-gray-700 font-medium">Kg Aproveitado</Label>
+                  <Label className="text-gray-700 font-medium">Peso do Animal Morto (kg)</Label>
                   <Input
                     type="number"
                     placeholder="Ex: 260"
@@ -144,7 +144,7 @@ export function CalculadoraPage() {
                   />
                 </div>
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center justify-between">
-                  <span className="text-xs text-gray-600 font-medium">Kg Aproveitado</span>
+                  <span className="text-xs text-gray-600 font-medium">Peso do Animal Morto</span>
                   <span className="text-lg font-bold text-[#c51d1f]">
                     {kgAproveitado > 0 ? kgAproveitado.toFixed(2) : "0,00"} kg
                   </span>
@@ -170,7 +170,7 @@ export function CalculadoraPage() {
                 className="mt-1.5 bg-white border-gray-300 text-gray-900"
               />
               <p className="text-[11px] text-gray-400 mt-1">
-                Deixe em branco para usar o kg aproveitado calculado acima.
+                Deixe em branco para usar o peso do animal morto calculado acima.
               </p>
             </div>
             <div>

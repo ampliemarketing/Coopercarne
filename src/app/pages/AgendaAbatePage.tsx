@@ -330,17 +330,6 @@ export function AgendaAbatePage() {
               {requiresSexBreakdown ? (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label className="text-xs text-gray-600 uppercase tracking-wide font-semibold">Machos</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      placeholder="0"
-                      value={machos}
-                      onChange={(e) => setMachos(e.target.value)}
-                      className="mt-2 border-gray-300"
-                    />
-                  </div>
-                  <div>
                     <Label className="text-xs text-gray-600 uppercase tracking-wide font-semibold">Fêmeas</Label>
                     <Input
                       type="number"
@@ -348,6 +337,17 @@ export function AgendaAbatePage() {
                       placeholder="0"
                       value={femeas}
                       onChange={(e) => setFemeas(e.target.value)}
+                      className="mt-2 border-gray-300"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-gray-600 uppercase tracking-wide font-semibold">Machos</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      placeholder="0"
+                      value={machos}
+                      onChange={(e) => setMachos(e.target.value)}
                       className="mt-2 border-gray-300"
                     />
                   </div>

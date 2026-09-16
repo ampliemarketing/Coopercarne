@@ -191,7 +191,7 @@ export function AgendaEntregaPage() {
               )}
 
               <div>
-                <Label className="text-xs text-gray-600 uppercase tracking-wide font-semibold">Unidades *</Label>
+                <Label className="text-xs text-gray-600 uppercase tracking-wide font-semibold">Unidades de Carcaça *</Label>
                 <Input
                   type="number"
                   placeholder="Ex: 5"
@@ -283,7 +283,7 @@ export function AgendaEntregaPage() {
 
                       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                         <div>
-                          <p className="text-xs text-gray-500 uppercase tracking-wide">Unidades</p>
+                          <p className="text-xs text-gray-500 uppercase tracking-wide">Unidades de Carcaça</p>
                           <p className="text-sm font-medium text-gray-900 mt-0.5">{entrega.unidades} un.</p>
                         </div>
                         <button className="text-gray-400 hover:text-[#c51d1f] transition-colors">
